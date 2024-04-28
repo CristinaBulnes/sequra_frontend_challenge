@@ -1,11 +1,11 @@
-import { useState } from "react";
 import "./InfoPopUp.css";
 
-function InfoPopUp({ instalmentFee }: { instalmentFee: number }) {
-  const [isOpen, setIsOpen] = useState(false);
+type InfoPopUpProps = {
+  instalmentFee: number;
+  handleClose: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+};
 
-  const toggleDropdown = () => setIsOpen(!isOpen);
-
+function InfoPopUp({ instalmentFee, handleClose }: InfoPopUpProps) {
   const popUpTitle = "Fracciona tu pago";
   const brandName = "seQura";
 
@@ -25,24 +25,28 @@ function InfoPopUp({ instalmentFee }: { instalmentFee: number }) {
   ];
 
   return (
-    <div className="popup-container">
-      <div className="popup-header">
-        <div className="brand-logo">{brandName}</div>
-        <div className="popup-title">{popUpTitle}</div>
+    <div className="popup-backdrop" onClick={handleClose}>
+      <div className="popup-container" onClick={(e) => e.stopPropagation()}>
+        <div className="popup-header">
+          <div className="brand-logo">{brandName}</div>
+          <div className="popup-title">{popUpTitle}</div>
+        </div>
+        <div className="popup-body">
+          <ul className="list-container">
+            {infoItems.map((item, index) => (
+              <li className="list-item" key={index}>
+                <div className="list-item-container">
+                  <div className="list-item-description">
+                    {item.description}
+                  </div>
+                  <div className="list-item-image"></div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="popup-footer">{instalmentDescription}</div>
       </div>
-      <div className="popup-body">
-        <ul className="list-container">
-          {infoItems.map((item, index) => (
-            <li className="list-item" key={index}>
-              <div className="list-item-container">
-                <div className="list-item-description">{item.description}</div>
-                <div className="list-item-image"></div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className="popup-footer">{instalmentDescription}</div>
     </div>
   );
 }
