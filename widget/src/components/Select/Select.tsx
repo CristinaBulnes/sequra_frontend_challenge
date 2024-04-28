@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./Select.css";
 
 type SelectOption = {
@@ -12,6 +13,20 @@ type SelectProps = {
 };
 
 function Select({ options, name }: SelectProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<SelectOption | null>(
+    null
+  );
+
+  const toggleDropdown = () => setIsOpen(!isOpen);
+
+  const onOptionClicked = (value: SelectOption) => {
+    setSelectedOption(value);
+    setIsOpen(false);
+  };
+
+  const selectDefaultOption = "Select one option";
+
   return (
     <div className="dropdown-container">
       <div
@@ -21,8 +36,11 @@ function Select({ options, name }: SelectProps) {
         aria-haspopup="listbox"
         aria-expanded="false"
         aria-controls="select-dropdown"
+        onClick={toggleDropdown}
       >
-        <span className="selected-value">Open this select menu</span>
+        <span className="selected-value">
+          {selectedOption?.label || selectDefaultOption}
+        </span>
         <span className="arrow-icon-container">
           <svg
             viewBox="0 0 24 24"
@@ -39,21 +57,24 @@ function Select({ options, name }: SelectProps) {
           </svg>
         </span>
       </div>
-      <div className="dropdown-list-container">
-        <ul className="dropdown-list" role="listbox">
-          {options.map((option) => (
-            <li className="dropdown-list-item">
-              <input
-                type="radio"
-                id={option.id}
-                value={option.value}
-                name={name}
-              />
-              <label htmlFor={option.id}>{option.label}</label>
-            </li>
-          ))}
-        </ul>
-      </div>
+      {isOpen && (
+        <div className="dropdown-list-container">
+          <ul className="dropdown-list" role="listbox">
+            {options.map((option) => (
+              <li className="dropdown-list-item" key={option.id}>
+                <input
+                  type="radio"
+                  id={option.id}
+                  value={option.value}
+                  name={name}
+                  onClick={() => onOptionClicked(option)}
+                />
+                <label htmlFor={option.id}>{option.label}</label>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
