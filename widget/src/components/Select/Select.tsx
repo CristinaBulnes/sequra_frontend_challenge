@@ -2,8 +2,7 @@ import { useState } from "react";
 import "./Select.css";
 
 type SelectOption = {
-  id: string;
-  value: string;
+  value: number;
   label: string;
 };
 
@@ -61,15 +60,15 @@ function Select({ options, name }: SelectProps) {
         <div className="dropdown-list-container">
           <ul className="dropdown-list" role="listbox">
             {options.map((option) => (
-              <li className="dropdown-list-item" key={option.id}>
+              <li className="dropdown-list-item" key={option.value}>
                 <input
                   type="radio"
-                  id={option.id}
+                  id={option.label}
                   value={option.value}
                   name={name}
                   onClick={() => onOptionClicked(option)}
                 />
-                <label htmlFor={option.id}>{option.label}</label>
+                <label htmlFor={option.label}>{option.label}</label>
               </li>
             ))}
           </ul>

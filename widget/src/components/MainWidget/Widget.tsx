@@ -1,17 +1,26 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import InfoPopUp from "../InfoPopUp/InfoPopUp";
 import Select from "../Select/Select";
 import "./Widget.css";
+import { CreditAgreementsContext } from "../../providers/CreditAgreementsProvider";
+import { CreditAgreement } from "../../hooks/useCreditAgreements";
 
 const widgetTitle = "Pagalo en";
 const moreInfoButton = "More info";
-const financingOptions = [
-  { id: "option1", value: "option1", label: "option1" },
-  { id: "option2", value: "option2", label: "option2" },
-];
+
+const getCreditAgreementMessage = (creditAgreement: CreditAgreement) => {
+  const value = creditAgreement.instalment_total.value;
+  const label = `${creditAgreement.instalment_count} cuotas de ${creditAgreement.instalment_total.string}/mes`;
+  return { value, label };
+};
 
 function Widget() {
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
+
+  const { creditAgreements } = useContext(CreditAgreementsContext);
+  const financialOptions = creditAgreements.map((creditAgreement) =>
+    getCreditAgreementMessage(creditAgreement)
+  );
 
   const togglePopUp = () => setIsPopUpOpen(!isPopUpOpen);
 
@@ -25,10 +34,10 @@ function Widget() {
           </button>
         </div>
         <div className="widget-select">
-          <Select options={financingOptions} name="financingOptions" />
+          <Select options={financialOptions} name="financialOptions" />
         </div>
       </div>
-      {isPopUpOpen && <InfoPopUp instalmentFee={3} handleClose={togglePopUp} />}
+      {isPopUpOpen && <InfoPopUp handleClose={togglePopUp} />}
     </>
   );
 }
