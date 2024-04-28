@@ -1,3 +1,4 @@
+import InfoPopUp from "../InfoPopUp/InfoPopUp";
 import Select from "../Select/Select";
 import "./Widget.css";
 
@@ -9,15 +10,18 @@ function Widget() {
     { id: "option2", value: "option2", label: "option2" },
   ];
   return (
-    <div className="widget-container">
-      <div className="widget-header">
-        <div className="widget-header-title">{widgetTitle}</div>
-        <button className="widget-moreInfo-button">{moreInfoButton}</button>
+    <>
+      <div className="widget-container">
+        <div className="widget-header">
+          <div className="widget-header-title">{widgetTitle}</div>
+          <button className="widget-moreInfo-button">{moreInfoButton}</button>
+        </div>
+        <div className="widget-select">
+          <Select options={financingOptions} name="financingOptions" />
+        </div>
       </div>
-      <div className="widget-select">
-        <Select options={financingOptions} name="financingOptions" />
-      </div>
-    </div>
+      <InfoPopUp instalmentFee={3} />
+    </>
   );
 }
 
