@@ -1,0 +1,36 @@
+.widget-container {
+  width: fit-content;
+  border: 1px solid var(--neutral-300);
+  border-radius: calc(var(--spacing-factor) / 2);
+  padding: calc(var(--spacing-factor) * 2);
+}
+
+.widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-factor);
+}
+
+.widget-header-title {
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: 24px;
+}
+
+.widget-moreInfo-button {
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0;
+  padding: var(--spacing-factor);
+
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--spacing-factor);
+}
+
+.widget-moreInfo-button:hover {
+  background-color: var(--neutral-20);
+}
