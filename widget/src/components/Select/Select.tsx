@@ -61,6 +61,8 @@ function Select({ options, name }: SelectProps) {
   );
   const { setPrice } = useContext(CreditAgreementsContext);
 
+  window.addEventListener("click", () => setIsOpen(false));
+
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
@@ -97,7 +99,10 @@ function Select({ options, name }: SelectProps) {
         aria-haspopup="listbox"
         aria-expanded="false"
         aria-controls="select-dropdown"
-        onClick={handleDropdownClicked}
+        onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+          e.stopPropagation();
+          handleDropdownClicked();
+        }}
       >
         <span className="selected-value">
           {selectedOption?.label || selectDefaultOption}
