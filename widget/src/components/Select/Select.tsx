@@ -1,6 +1,34 @@
 import { useState } from "react";
 import "./Select.css";
 
+const trackOptionChangeEvent = (value: number) => {
+  const data = {
+    context: "checkoutWidget",
+    type: "simulatorInstalmentChanged",
+    selectedInstalment: value,
+  };
+
+  fetch("http://localhost:8080/events", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response;
+    })
+    .then((data) => {
+      console.log("Response:", data);
+    })
+    .catch((error) => {
+      console.error("There was a problem with the fetch operation:", error);
+    });
+};
+
 type SelectOption = {
   value: number;
   label: string;
@@ -21,6 +49,7 @@ function Select({ options, name }: SelectProps) {
 
   const onOptionClicked = (value: SelectOption) => {
     setSelectedOption(value);
+    trackOptionChangeEvent(value.value);
     setIsOpen(false);
   };
 

@@ -9,7 +9,7 @@ const widgetTitle = "Pagalo en";
 const moreInfoButton = "More info";
 
 const getCreditAgreementMessage = (creditAgreement: CreditAgreement) => {
-  const value = creditAgreement.instalment_total.value;
+  const value = creditAgreement.instalment_count;
   const label = `${creditAgreement.instalment_count} cuotas de ${creditAgreement.instalment_total.string}/mes`;
   return { value, label };
 };
