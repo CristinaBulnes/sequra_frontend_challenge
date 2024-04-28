@@ -38,15 +38,31 @@ const useCreditAgreements = () => {
     []
   );
   const [instalmentFee, setInstalmentFee] = useState<string>("");
+  const productPriceElement = document.getElementById("product-price");
 
   useEffect(() => {
-    const productPriceElement = document.getElementById("product-price");
     const price = productPriceElement && getProductPrice(productPriceElement);
 
     if (price) {
       setProductPrice(price);
     }
-  }, []);
+  }, [productPriceElement]);
+
+  useEffect(() => {
+    if (productPriceElement) {
+      const handlePriceChange = () => {
+        const newPrice = getProductPrice(productPriceElement);
+        if (newPrice) {
+          setProductPrice(newPrice);
+        }
+      };
+
+      productPriceElement.addEventListener("change", handlePriceChange);
+      return () => {
+        productPriceElement?.removeEventListener("change", handlePriceChange);
+      };
+    }
+  }, [productPriceElement]);
 
   useEffect(() => {
     if (!productPrice) {
