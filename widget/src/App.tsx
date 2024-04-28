@@ -1,11 +1,14 @@
 import Widget from "./components/MainWidget/Widget";
 import "./App.css";
+import CreditAgreementsProvider from "./providers/CreditAgreementsProvider";
 
 function App() {
   return (
-    <div className="App">
-      <Widget />
-    </div>
+    <CreditAgreementsProvider>
+      <div className="App">
+        <Widget />
+      </div>
+    </CreditAgreementsProvider>
   );
 }
 
