@@ -26,9 +26,8 @@
 }
 
 .dropdown-list-container {
-  position: relative;
+  position: absolute;
   width: 100%;
-  max-height: 200px;
   background-color: #fff;
   overflow-y: auto;
   transition: 0.5s ease;

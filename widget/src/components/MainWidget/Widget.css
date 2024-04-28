@@ -1,6 +1,6 @@
 .widget-container {
-  width: 200px;
-  height: 80px;
+  width: 100%;
+  height: fit-content;
   border: 1px solid var(--neutral-300);
   border-radius: calc(var(--spacing-factor) / 2);
   padding: calc(var(--spacing-factor) * 2);
