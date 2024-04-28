@@ -18,60 +18,18 @@ export type CreditAgreement = {
   total_with_tax: ValueWithString;
 };
 
-function getProductPrice(productPriceElement: HTMLElement) {
-  const productPriceStringValue = productPriceElement.textContent?.replace(
-    ",",
-    "."
-  );
-
-  const productPrice =
-    productPriceStringValue && parseFloat(productPriceStringValue);
-
-  const productPriceInEurCents = productPrice && productPrice * 100;
-
-  return productPriceInEurCents;
-}
-
-const useCreditAgreements = () => {
-  const [productPrice, setProductPrice] = useState<number | string | null>(0);
+const useCreditAgreements = (price: number) => {
   const [creditAgreements, setCreditAgreements] = useState<CreditAgreement[]>(
     []
   );
   const [instalmentFee, setInstalmentFee] = useState<string>("");
-  const productPriceElement = document.getElementById("product-price");
 
   useEffect(() => {
-    const price = productPriceElement && getProductPrice(productPriceElement);
-
-    if (price) {
-      setProductPrice(price);
-    }
-  }, [productPriceElement]);
-
-  useEffect(() => {
-    if (productPriceElement) {
-      const handlePriceChange = () => {
-        const newPrice = getProductPrice(productPriceElement);
-        if (newPrice) {
-          setProductPrice(newPrice);
-        }
-      };
-
-      productPriceElement.addEventListener("change", handlePriceChange);
-      return () => {
-        productPriceElement?.removeEventListener("change", handlePriceChange);
-      };
-    }
-  }, [productPriceElement]);
-
-  useEffect(() => {
-    if (!productPrice) {
+    if (!price) {
       console.log("A price value wasn't found");
       return;
     }
-    fetch(
-      `http://localhost:8080/credit_agreements?totalWithTax=${productPrice}`
-    )
+    fetch(`http://localhost:8080/credit_agreements?totalWithTax=${price}`)
       .then((res) => {
         return res.json();
       })
@@ -81,7 +39,7 @@ const useCreditAgreements = () => {
         const fee = data[0].instalment_fee.string;
         setInstalmentFee(fee);
       });
-  }, [productPrice]);
+  }, [price]);
 
   return {
     creditAgreements,

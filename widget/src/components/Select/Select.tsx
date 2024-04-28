@@ -1,5 +1,20 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import "./Select.css";
+import { CreditAgreementsContext } from "../../providers/CreditAgreementsProvider";
+
+function getProductPrice(productPriceElement: HTMLElement) {
+  const productPriceStringValue = productPriceElement.textContent?.replace(
+    ",",
+    "."
+  );
+
+  const productPrice =
+    productPriceStringValue && parseFloat(productPriceStringValue);
+
+  const productPriceInEurCents = productPrice && productPrice * 100;
+
+  return productPriceInEurCents;
+}
 
 const trackOptionChangeEvent = (value: number) => {
   const data = {
@@ -44,8 +59,28 @@ function Select({ options, name }: SelectProps) {
   const [selectedOption, setSelectedOption] = useState<SelectOption | null>(
     null
   );
+  const { setPrice } = useContext(CreditAgreementsContext);
 
-  const toggleDropdown = () => setIsOpen(!isOpen);
+  window.addEventListener("click", () => setIsOpen(false));
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const updatePrice = () => {
+    const productPriceElement = document.getElementById("product-price");
+
+    const price = productPriceElement && getProductPrice(productPriceElement);
+
+    if (price) {
+      setPrice(price);
+    }
+  };
+
+  const handleDropdownClicked = () => {
+    toggleDropdown();
+    updatePrice();
+  };
 
   const onOptionClicked = (value: SelectOption) => {
     setSelectedOption(value);
@@ -64,7 +99,10 @@ function Select({ options, name }: SelectProps) {
         aria-haspopup="listbox"
         aria-expanded="false"
         aria-controls="select-dropdown"
-        onClick={toggleDropdown}
+        onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+          e.stopPropagation();
+          handleDropdownClicked();
+        }}
       >
         <span className="selected-value">
           {selectedOption?.label || selectDefaultOption}

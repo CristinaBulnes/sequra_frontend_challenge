@@ -1,4 +1,4 @@
-import { createContext, useMemo } from "react";
+import { createContext, useMemo, useState } from "react";
 
 import useCreditAgreements, {
   CreditAgreement,
@@ -7,6 +7,7 @@ import useCreditAgreements, {
 export interface CreditAgreementsContextType {
   creditAgreements: CreditAgreement[];
   instalmentFee: string;
+  setPrice: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export const CreditAgreementsContext =
@@ -17,12 +18,15 @@ type Props = {
 };
 
 const CreditAgreementsProvider = ({ children }: Props) => {
-  const { creditAgreements, instalmentFee } = useCreditAgreements();
+  const [price, setPrice] = useState<number>(0);
+
+  const { creditAgreements, instalmentFee } = useCreditAgreements(price);
 
   const contextValue = useMemo(
     () => ({
       creditAgreements,
       instalmentFee,
+      setPrice,
     }),
     [creditAgreements, instalmentFee]
   );
