@@ -22,7 +22,6 @@ function getProductPrice(productPriceElement: HTMLElement) {
 export interface CreditAgreementsContextType {
   creditAgreements: CreditAgreement[];
   instalmentFee: string;
-  setPrice: React.Dispatch<React.SetStateAction<number>>;
   creditSelected: SelectOption | null;
   setCreditSelected: React.Dispatch<React.SetStateAction<SelectOption | null>>;
 }
@@ -63,7 +62,7 @@ const CreditAgreementsProvider = ({ children }: Props) => {
         (element) => element.removeEventListener("click", updatePrice)
       );
     };
-  });
+  }, []);
 
   const { creditAgreements, instalmentFee } = useCreditAgreements(price);
 
@@ -71,7 +70,6 @@ const CreditAgreementsProvider = ({ children }: Props) => {
     () => ({
       creditAgreements,
       instalmentFee,
-      setPrice,
       creditSelected,
       setCreditSelected,
     }),
