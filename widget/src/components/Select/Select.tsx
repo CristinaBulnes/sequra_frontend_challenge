@@ -1,20 +1,7 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./Select.css";
 import { CreditAgreementsContext } from "../../providers/CreditAgreementsProvider";
-
-function getProductPrice(productPriceElement: HTMLElement) {
-  const productPriceStringValue = productPriceElement.textContent?.replace(
-    ",",
-    "."
-  );
-
-  const productPrice =
-    productPriceStringValue && parseFloat(productPriceStringValue);
-
-  const productPriceInEurCents = productPrice && productPrice * 100;
-
-  return productPriceInEurCents;
-}
+import { CreditAgreement } from "../../hooks/useCreditAgreements";
 
 const trackOptionChangeEvent = (value: number) => {
   const data = {
@@ -44,46 +31,51 @@ const trackOptionChangeEvent = (value: number) => {
     });
 };
 
-type SelectOption = {
+const getCreditAgreementMessage = (creditAgreement: CreditAgreement) => {
+  const value = creditAgreement.instalment_count;
+  const label = `${creditAgreement.instalment_count} cuotas de ${creditAgreement.instalment_total.string}/mes`;
+  return { value, label };
+};
+
+export type SelectOption = {
   value: number;
   label: string;
 };
 
 type SelectProps = {
-  options: SelectOption[];
   name: string;
 };
 
-function Select({ options, name }: SelectProps) {
+function Select({ name }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<SelectOption | null>(
-    null
-  );
-  const { setPrice } = useContext(CreditAgreementsContext);
+  const [options, setOptions] = useState<SelectOption[]>([]);
 
-  window.addEventListener("click", () => setIsOpen(false));
+  const { creditAgreements, creditSelected, setCreditSelected } = useContext(
+    CreditAgreementsContext
+  );
+
+  useEffect(() => {
+    const financialOptions = creditAgreements.map((creditAgreement) =>
+      getCreditAgreementMessage(creditAgreement)
+    );
+    setOptions(financialOptions);
+  }, [creditAgreements]);
+
+  window.addEventListener("click", (e) => {
+    e.stopPropagation();
+    setIsOpen(false);
+  });
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
-  const updatePrice = () => {
-    const productPriceElement = document.getElementById("product-price");
-
-    const price = productPriceElement && getProductPrice(productPriceElement);
-
-    if (price) {
-      setPrice(price);
-    }
-  };
-
   const handleDropdownClicked = () => {
     toggleDropdown();
-    updatePrice();
   };
 
   const onOptionClicked = (value: SelectOption) => {
-    setSelectedOption(value);
+    setCreditSelected(value);
     trackOptionChangeEvent(value.value);
     setIsOpen(false);
   };
@@ -105,7 +97,7 @@ function Select({ options, name }: SelectProps) {
         }}
       >
         <span className="selected-value">
-          {selectedOption?.label || selectDefaultOption}
+          {creditSelected?.label || selectDefaultOption}
         </span>
         <span className="arrow-icon-container">
           <svg
@@ -127,13 +119,19 @@ function Select({ options, name }: SelectProps) {
         <div className="dropdown-list-container">
           <ul className="dropdown-list" role="listbox">
             {options.map((option) => (
-              <li className="dropdown-list-item" key={option.value}>
+              <li
+                className="dropdown-list-item"
+                key={option.value}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOptionClicked(option);
+                }}
+              >
                 <input
                   type="radio"
                   id={option.label}
                   value={option.value}
                   name={name}
-                  onClick={() => onOptionClicked(option)}
                 />
                 <label htmlFor={option.label}>{option.label}</label>
               </li>
