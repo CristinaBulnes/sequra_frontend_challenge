@@ -1,0 +1,20 @@
+:root {
+  --spacing-factor: 8px;
+  --neutral-20: #f4f6f7;
+  --neutral-40: #dfe3e6;
+  --neutral-60: #b3bec5;
+  --neutral-100: #647e91;
+  --neutral-300: #5e7484;
+  --neutral-800: #17364d;
+}
+
+.App {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+ul > li {
+  text-decoration: none;
+}
