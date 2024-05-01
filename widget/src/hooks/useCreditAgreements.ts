@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
+import { BASE_URL } from "../constants";
+import getCreditAgreementsOptions from "../utils/getCreditAgreementsOptions";
 
 type ValueWithString = {
   value: number;
   string: string;
 };
 
-export type CreditAgreement = {
+export type CreditAgreementDTO = {
   apr: ValueWithString;
   cost_of_credit: ValueWithString;
   cost_of_credit_pct: ValueWithString;
@@ -18,27 +20,45 @@ export type CreditAgreement = {
   total_with_tax: ValueWithString;
 };
 
+export type CreditAgreement = {
+  value: number;
+  label: string;
+};
+
 const useCreditAgreements = (price: number) => {
   const [creditAgreements, setCreditAgreements] = useState<CreditAgreement[]>(
     []
   );
   const [instalmentFee, setInstalmentFee] = useState<string>("");
 
-  useEffect(() => {
-    if (!price) {
-      console.log("A price value wasn't found");
-      return;
+  const getCreditAgreements = async (price: number) => {
+    try {
+      if (!price) {
+        throw new Error("No price found");
+      }
+
+      const response = await fetch(
+        `${BASE_URL}/credit_agreements?totalWithTax=${price}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+
+      const formatData = getCreditAgreementsOptions(data);
+      setCreditAgreements(formatData);
+
+      const fee = data[0].instalment_fee.string;
+      setInstalmentFee(fee);
+    } catch (error) {
+      throw new Error("There was an error");
     }
-    fetch(`http://localhost:8080/credit_agreements?totalWithTax=${price}`)
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        setCreditAgreements(data);
-        // For a given total, it's being assumed that all the options are gonna have the same fee
-        const fee = data[0].instalment_fee.string;
-        setInstalmentFee(fee);
-      });
+  };
+
+  useEffect(() => {
+    getCreditAgreements(price);
   }, [price]);
 
   return {

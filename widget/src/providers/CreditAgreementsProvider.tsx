@@ -4,20 +4,7 @@ import useCreditAgreements, {
   CreditAgreement,
 } from "../hooks/useCreditAgreements";
 import { SelectOption } from "../components/Select/Select";
-
-function getProductPrice(productPriceElement: HTMLElement) {
-  const productPriceStringValue = productPriceElement.textContent?.replace(
-    ",",
-    "."
-  );
-
-  const productPrice =
-    productPriceStringValue && parseFloat(productPriceStringValue);
-
-  const productPriceInEurCents = productPrice && productPrice * 100;
-
-  return productPriceInEurCents;
-}
+import usePrice from "../hooks/usePrice";
 
 export interface CreditAgreementsContextType {
   creditAgreements: CreditAgreement[];
@@ -34,37 +21,15 @@ type Props = {
 };
 
 const CreditAgreementsProvider = ({ children }: Props) => {
-  const [price, setPrice] = useState<number>(0);
   const [creditSelected, setCreditSelected] = useState<SelectOption | null>(
     null
   );
-
-  const updatePrice = () => {
-    const productPriceElement = document.getElementById("product-price");
-
-    const price = productPriceElement && getProductPrice(productPriceElement);
-
-    if (price) {
-      setPrice(price);
-    }
-
-    // On price updated, reset the selected option value
-    setCreditSelected(null);
-  };
+  const { productPrice } = usePrice();
+  const { creditAgreements, instalmentFee } = useCreditAgreements(productPrice);
 
   useEffect(() => {
-    Array.from(document.getElementsByClassName("product-capacity")).map(
-      (element) => element.addEventListener("click", updatePrice)
-    );
-
-    return () => {
-      Array.from(document.getElementsByClassName("product-capacity")).map(
-        (element) => element.removeEventListener("click", updatePrice)
-      );
-    };
-  }, []);
-
-  const { creditAgreements, instalmentFee } = useCreditAgreements(price);
+    setCreditSelected(null);
+  }, [productPrice]);
 
   const contextValue = useMemo(
     () => ({
